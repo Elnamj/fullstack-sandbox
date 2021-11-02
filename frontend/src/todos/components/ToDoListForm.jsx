@@ -91,7 +91,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 }}>
                 <DeleteIcon />
               </Button>
-              <Checkbox checked={todo.completed === true ? true : false} color="primary" onChange={(event) => {
+              <Checkbox checked={todo.completed} color="primary" onChange={(event) => {
                 handleCompleteTodo(index, event.target.checked)
               }}></Checkbox>
             </div>
