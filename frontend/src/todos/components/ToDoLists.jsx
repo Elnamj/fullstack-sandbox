@@ -8,52 +8,46 @@ import ListItemIcon from '@material-ui/core/ListItemIcon'
 import ReceiptIcon from '@material-ui/icons/Receipt'
 import Typography from '@material-ui/core/Typography'
 import { ToDoListForm } from './ToDoListForm'
-
-const sleep = ms => new Promise(resolve => setTimeout(resolve, ms))
-
-const getPersonalTodos = () => {
-  return sleep(1000).then(() => Promise.resolve({
-    '0000000001': {
-      id: '0000000001',
-      title: 'First List',
-      todos: ['First todo of first list!']
-    },
-    '0000000002': {
-      id: '0000000002',
-      title: 'Second List',
-      todos: ['First todo of second list!']
-    }
-  }))
-}
+import CheckIcon from '@material-ui/icons/Check'
 
 export const ToDoLists = ({ style }) => {
-  const [toDoLists, setToDoLists] = useState({})
+  const [toDoLists, setToDoLists] = useState([])
   const [activeList, setActiveList] = useState()
 
   useEffect(() => {
-    getPersonalTodos()
-      .then(setToDoLists)
+    const getTodos = async () => {
+      const todosFromServer = await fetchTodos()
+      setToDoLists(todosFromServer)
+    }
+
+    getTodos()
   }, [])
 
-  if (!Object.keys(toDoLists).length) return null
+  const fetchTodos = async () => {
+    const res = await fetch('http://localhost:5000/toDoLists')
+    const data = await res.json()
+    return data
+  }
+
+  if (!toDoLists.length) return null
+
   return <Fragment>
     <Card style={style}>
       <CardContent>
-        <Typography
-          component='h2'
-        >
+        <Typography component='h2'>
           My ToDo Lists
         </Typography>
         <List>
-          {Object.keys(toDoLists).map((key) => <ListItem
-            key={key}
+          {toDoLists.map((list, index) => <ListItem
+            key={list.id}
             button
-            onClick={() => setActiveList(key)}
-          >
+            onClick={() => setActiveList(index)}>
             <ListItemIcon>
+              {console.log("list completed?: ", list.completed)}
               <ReceiptIcon />
             </ListItemIcon>
-            <ListItemText primary={toDoLists[key].title} />
+            <ListItemText primary={list.title} />
+            {list.todos.every(todo => todo.completed) && <CheckIcon />}
           </ListItem>)}
         </List>
       </CardContent>
@@ -61,13 +55,14 @@ export const ToDoLists = ({ style }) => {
     {toDoLists[activeList] && <ToDoListForm
       key={activeList} // use key to make React recreate component to reset internal state
       toDoList={toDoLists[activeList]}
-      saveToDoList={(id, { todos }) => {
-        const listToUpdate = toDoLists[id]
-        setToDoLists({
-          ...toDoLists,
-          [id]: { ...listToUpdate, todos }
-        })
-      }}
-    />}
-  </Fragment>
+      saveToDoList={(id, updatedList) => {
+        let toDolistIndex = toDoLists.findIndex(list => list.id === id)
+        let newToDoLists = [...toDoLists]
+        newToDoLists[toDolistIndex] = updatedList
+        setToDoLists(newToDoLists)
+      }
+      }
+    />
+    }
+  </Fragment >
 }
