@@ -43,7 +43,6 @@ export const ToDoLists = ({ style }) => {
             button
             onClick={() => setActiveList(index)}>
             <ListItemIcon>
-              {console.log("list completed?: ", list.completed)}
               <ReceiptIcon />
             </ListItemIcon>
             <ListItemText primary={list.title} />

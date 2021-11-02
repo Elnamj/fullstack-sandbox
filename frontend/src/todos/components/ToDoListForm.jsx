@@ -36,7 +36,6 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
     newTodo.completed = completed
     newTodos[index] = newTodo
     setTodos(newTodos)
-    handleChangeTodo(newTodos)
   }
 
   const handleTitle = (index, title) => {
@@ -45,20 +44,20 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
     newTodo.title = title
     newTodos[index] = newTodo
     setTodos(newTodos)
-    handleChangeTodo(newTodos)
   }
 
-  const handleChangeTodo = async (todo) => {
+  const handleChangeTodo = async (newTodos) => {
     await fetch(`http://localhost:5000/toDoLists/${toDoList.id}`, {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({ id: toDoList.id, title: toDoList.title, todos })
+      body: JSON.stringify({ id: toDoList.id, title: toDoList.title, todos: newTodos })
     })
   }
 
   useEffect(() => {
+    handleChangeTodo(todos)
     saveToDoList({ ...toDoList, todos })
   }, [todos])
 
@@ -87,7 +86,7 @@ export const ToDoListForm = ({ toDoList, saveToDoList }) => {
                 color='secondary'
                 className={classes.standardSpace}
                 onClick={() => {
-                  handleChangeTodo([...todos.slice(0, index), ...todos.slice(index + 1)])
+                  setTodos([...todos.slice(0, index), ...todos.slice(index + 1)])
                 }}>
                 <DeleteIcon />
               </Button>

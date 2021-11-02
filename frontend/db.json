@@ -7,10 +7,6 @@
         {
           "title": "First todo of first list!",
           "completed": true
-        },
-        {
-          "title": "hej",
-          "completed": true
         }
       ]
     },
@@ -20,10 +16,6 @@
       "todos": [
         {
           "title": "First todo of second list!",
-          "completed": true
-        },
-        {
-          "title": "jfs",
           "completed": true
         }
       ]
